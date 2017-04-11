@@ -62,16 +62,16 @@ public class CodeWriter
 
 	private void writeArithUnary(char op)
 	{
-		out.accept("//arith unary with op: " + op);
+		out.accept("  //arith unary with op: " + op);
 		out.accept("  @SP");
-		out.accept("  AM=M-1");
+		out.accept("  A=M-1");
 		out.accept("  M=" + op + "M");
 		out.accept("");
 	}
 
 	private void writeArithBinary(char op)
 	{
-		out.accept("//arith binary with op: " + op);
+		out.accept("  //arith binary with op: " + op);
 		out.accept("  @SP");
 		out.accept("  AM=M-1");
 		out.accept("  D=M");
@@ -108,7 +108,7 @@ public class CodeWriter
 
 	private ARITHMETIC_TYPE parseArithmeticType(String command)
 	{
-		if (OPERATOR_LOOKUP.containsKey(command))
+		if (!OPERATOR_LOOKUP.containsKey(command))
 		{
 			return ARITHMETIC_TYPE.LOGICAL_EXPRESSION;
 		}
@@ -152,7 +152,7 @@ public class CodeWriter
 	
 	private void writePushConstant(int index)
 	{
-		out.accept("  //push constant");
+		out.accept("  //push constant " + index);
 		out.accept("  @" + index);
 		out.accept("  D=A");
 		out.accept("");
