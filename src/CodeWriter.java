@@ -1,9 +1,6 @@
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import Parser.CommandType;
-import sun.security.provider.JavaKeyStore.CaseExactJKS;
-
 /**
  * Writes each line of a vm to hack translation to a supplied producer.
  * 
@@ -12,16 +9,16 @@ import sun.security.provider.JavaKeyStore.CaseExactJKS;
  */
 public class CodeWriter
 {
-	// TODO add a verbosity level to suppress comments or any extra characters
-	private Consumer<String> out;
-	private int labelCounter;
-
 	private enum ARITHMETIC_TYPE
 	{
 		UNARY,
 		BINARY,
 		LOGICAL_EXPRESSION,
 	}
+
+	// TODO add a verbosity level to suppress comments or any extra characters
+	private Consumer<String>						out;
+	private int										labelCounter;
 
 	private final static HashMap<String, Character>	OPERATOR_LOOKUP				= new HashMap<>(6);
 	private final static HashMap<String, String>	LOGICAL_EXPRESSION_LOOKUP	= new HashMap<>(3);
@@ -35,6 +32,7 @@ public class CodeWriter
 		OPERATOR_LOOKUP.put("or", '|');
 		OPERATOR_LOOKUP.put("not", '!');
 
+		// TODO look into combining look up tables (or not)
 		LOGICAL_EXPRESSION_LOOKUP.put("eq", "JEQ");
 		LOGICAL_EXPRESSION_LOOKUP.put("gt", "JGT");
 		LOGICAL_EXPRESSION_LOOKUP.put("lt", "JLT");
@@ -104,7 +102,7 @@ public class CodeWriter
 		out.accept("\tA=A-1");
 		out.accept("\tM=D");
 		out.accept("");
-		
+
 		labelCounter++;
 	}
 
@@ -127,9 +125,62 @@ public class CodeWriter
 		}
 	}
 
-	public void writePushPop(CommandType commandType, String segment, int index)
+	public void writePushPop(Parser.CommandType commandType, String segment, int index)
 	{
+		switch (commandType)
+		{
+			case PUSH:
+				writePush(segment, index);
+				break;
+			case POP:
+				writePop(segment, index);
+				break;
+			default:
+				throw new IllegalArgumentException("The only acceptable Parser.CommandType enums are PUSH and POP");
+		}
+	}
 
+	private void writePush(String segment, int index)
+	{
+		switch(segment)
+		{
+			case "constant":
+				writePushConstant(index);
+		}
+		
+	}
+	
+	private void writePushConstant(int index)
+	{
+		out.accept("\t//push constant");
+		out.accept("\t@" + index);
+		out.accept("\tD=A");
+		out.accept("");
+	}
+
+	private void writePop(String segment, int index)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void writePushD()
+	{
+		out.accept("//push D");
+		out.accept("\t@SP");
+		out.accept("\tAM=M+1");
+		out.accept("\tA=A-1");
+		out.accept("\tM=D");
+		out.accept("");
+	}
+
+	private void writePopD()
+	{
+		out.accept("//pop D");
+		out.accept("\t@SP");
+		out.accept("\tAM=M-1");
+		out.accept("\tD=M");
+		out.accept("");
 	}
 
 	/**
