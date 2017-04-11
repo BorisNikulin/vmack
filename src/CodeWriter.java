@@ -22,6 +22,7 @@ public class CodeWriter
 
 	private final static HashMap<String, Character>	OPERATOR_LOOKUP				= new HashMap<>(6);
 	private final static HashMap<String, String>	LOGICAL_EXPRESSION_LOOKUP	= new HashMap<>(3);
+	private final static HashMap<String, String>	SEGMENT_LOOKUP				= new HashMap<>(3);
 
 	static
 	{
@@ -36,6 +37,12 @@ public class CodeWriter
 		LOGICAL_EXPRESSION_LOOKUP.put("eq", "JEQ");
 		LOGICAL_EXPRESSION_LOOKUP.put("gt", "JGT");
 		LOGICAL_EXPRESSION_LOOKUP.put("lt", "JLT");
+
+		SEGMENT_LOOKUP.put("argument", "ARG");
+		SEGMENT_LOOKUP.put("local", "LCL");
+		SEGMENT_LOOKUP.put("this", "THIS");
+		SEGMENT_LOOKUP.put("that", "THAT");
+		SEGMENT_LOOKUP.put("temp", "R5");
 	}
 
 	public CodeWriter(Consumer<String> out)
@@ -142,28 +149,82 @@ public class CodeWriter
 
 	private void writePush(String segment, int index)
 	{
-		switch(segment)
+		switch (segment)
 		{
 			case "constant":
 				writePushConstant(index);
+				break;
+			case "temp":
+			case "local":
+			case "arg":
+			case "this":
+			case "that":
+				writePushSimpleSegment(SEGMENT_LOOKUP.get(segment), index);
+				break;
+			case "pointer":
+				pushPointer(index);
+				break;
+			case "static":
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid segment");
 		}
-		
+
 	}
-	
+
 	private void writePushConstant(int index)
 	{
 		out.accept("  //push constant " + index);
 		out.accept("  @" + index);
 		out.accept("  D=A");
 		out.accept("");
-		
+
 		writePushD();
 	}
 
+	private void writePushSimpleSegment(String segment, int index)
+	{
+		out.accept("  //push simple segment " + segment + "[" + index + "]");
+		out.accept("  @" + index);
+		out.accept("  D=A");
+		out.accept("  @" + segment);
+		out.accept("  A=M+D");
+		out.accept("  D=M");
+		out.accept("");
+
+		writePushD();
+	}
+
+	private void pushPointer(int index)
+	{
+		//TODO simplify if s (DRY)
+		if(index == 0)
+		{
+			out.accept("  //push pointer " + index);
+			out.accept("  @THIS");
+			out.accept("  D=A");
+			out.accept("");
+
+			writePushD();
+		}
+		else if(index == 1)
+		{
+			out.accept("  //push pointer " + index);
+			out.accept("  @THAT");
+			out.accept("  D=A");
+			out.accept("");
+
+			writePushD();
+		}
+		else {
+			throw new IllegalArgumentException("Invalid offset to pointer segment");
+		}
+	}
+	
 	private void writePop(String segment, int index)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void writePushD()
