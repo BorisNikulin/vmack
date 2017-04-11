@@ -156,6 +156,8 @@ public class CodeWriter
 		out.accept("  @" + index);
 		out.accept("  D=A");
 		out.accept("");
+		
+		writePushD();
 	}
 
 	private void writePop(String segment, int index)
