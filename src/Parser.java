@@ -1,9 +1,6 @@
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Scanner;
-import java.util.function.Consumer;
-
-import Parser.CommandType;
 
 public class Parser implements AutoCloseable
 {
@@ -111,7 +108,7 @@ public class Parser implements AutoCloseable
 			case POP:
 				parsePushOrPop();
 				break;
-			//vm part 2 here
+			// vm part 2 here
 		}
 	}
 
@@ -145,10 +142,10 @@ public class Parser implements AutoCloseable
 			case "pop":
 				commandType = CommandType.POP;
 				break;
-			//vm part 2 stuff here
+			// vm part 2 stuff here
 		}
 	}
-	
+
 	private void parseArithemtic()
 	{
 		arg1 = splitLine[0];
@@ -168,7 +165,7 @@ public class Parser implements AutoCloseable
 	{
 		// pardon the small regex :D
 		// I just don't want to spam lots of replaceAll s
-		//TODO check this code (maybe 58fd9bd is a better version)
+		// TODO check this code (maybe 58fd9bd is a better version)
 
 		int commentIndex = rawLine.indexOf("//");
 		if (commentIndex >= 0)
