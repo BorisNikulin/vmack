@@ -157,7 +157,7 @@ public class CodeWriter
 			//TODO bound checking on temp?
 			case "temp":
 			case "local":
-			case "arg":
+			case "argument":
 			case "this":
 			case "that":
 				writePushSimpleSegment(SEGMENT_LOOKUP.get(segment), index);
@@ -168,7 +168,7 @@ public class CodeWriter
 			case "static":
 				break;
 			default:
-				throw new IllegalArgumentException("Invalid segment");
+				throw new IllegalArgumentException("Invalid segment: " + segment);
 		}
 	}
 
@@ -217,7 +217,7 @@ public class CodeWriter
 			writePushD();
 		}
 		else {
-			throw new IllegalArgumentException("Invalid offset to pointer segment");
+			throw new IllegalArgumentException("Invalid offset to pointer segment: " + index);
 		}
 	}
 	
@@ -228,7 +228,7 @@ public class CodeWriter
 			//TODO bound checking on temp?
 			case "temp":
 			case "local":
-			case "arg":
+			case "argument":
 			case "this":
 			case "that":
 				writePopSimpleSegment(SEGMENT_LOOKUP.get(segment), index);
@@ -239,7 +239,7 @@ public class CodeWriter
 			case "static":
 				break;
 			default:
-				throw new IllegalArgumentException("Invalid segment");
+				throw new IllegalArgumentException("Invalid segment: " + segment);
 		}
 	}
 
@@ -282,7 +282,7 @@ public class CodeWriter
 			out.accept("");
 		}
 		else {
-			throw new IllegalArgumentException("Invalid offset to pointer segment");
+			throw new IllegalArgumentException("Invalid offset to pointer segment: " + index);
 		}
 	}
 
