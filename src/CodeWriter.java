@@ -82,7 +82,7 @@ public class CodeWriter
 
 	private void writeArithLogicalExpression(String op)
 	{
-		out.accept("//arith logical expression with op: " + op);
+		out.accept("\t//arith logical expression with op: " + op);
 		out.accept("\t@SP");
 		out.accept("\tA=M-1");
 		out.accept("\tA=A-1");
@@ -166,7 +166,7 @@ public class CodeWriter
 
 	private void writePushD()
 	{
-		out.accept("//push D");
+		out.accept("\t//push D");
 		out.accept("\t@SP");
 		out.accept("\tAM=M+1");
 		out.accept("\tA=A-1");
@@ -176,7 +176,7 @@ public class CodeWriter
 
 	private void writePopD()
 	{
-		out.accept("//pop D");
+		out.accept("\t//pop D");
 		out.accept("\t@SP");
 		out.accept("\tAM=M-1");
 		out.accept("\tD=M");
