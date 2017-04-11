@@ -54,6 +54,13 @@ public class CodeWriter
 		this.staticQualifier = staticQualifier;
 	}
 
+	/**
+	 * Writes each line of translation to the consumer according to the vm
+	 * specification.
+	 * 
+	 * @param command
+	 *            - the arithmetic command to translate.
+	 */
 	public void writeArithemtic(String command)
 	{
 		switch (parseArithmeticType(command))
@@ -135,6 +142,17 @@ public class CodeWriter
 		}
 	}
 
+	/**
+	 * Writes each line of translation to the consumer according to the vm
+	 * specification.
+	 * 
+	 * @param commandType
+	 *            - Whether to push or pop.
+	 * @param segment
+	 *            - virtual memory segment.
+	 * @param index
+	 *            - index within the memory segment.
+	 */
 	public void writePushPop(Parser.CommandType commandType, String segment, int index)
 	{
 		switch (commandType)
@@ -177,6 +195,7 @@ public class CodeWriter
 				throw new IllegalArgumentException("Invalid segment: " + segment);
 		}
 	}
+
 	private void writePushConstant(int index)
 	{
 		out.accept("  //push constant " + index);
@@ -239,14 +258,14 @@ public class CodeWriter
 			throw new IllegalArgumentException("Invalid offset to pointer segment: " + index);
 		}
 	}
-	
+
 	private void writePushStatic(int index)
 	{
 		out.accept("  //push static[" + index + "]");
 		out.accept("  @" + staticQualifier + "." + index);
 		out.accept("  D=M");
 		out.accept("");
-		
+
 		writePushD();
 	}
 
@@ -274,7 +293,7 @@ public class CodeWriter
 				throw new IllegalArgumentException("Invalid segment: " + segment);
 		}
 	}
-	
+
 	private void writePopSimpleSegment(String segment, int index)
 	{
 		out.accept("  //pop simple segment " + segment + "[" + index + "]");
@@ -341,7 +360,7 @@ public class CodeWriter
 	private void writePopStatic(int index)
 	{
 		writePopD();
-		
+
 		out.accept("  //pop static[" + index + "]");
 		out.accept("  @" + staticQualifier + "." + index);
 		out.accept("  M=D");
@@ -349,7 +368,6 @@ public class CodeWriter
 
 	}
 
-	
 	private void writePushD()
 	{
 		out.accept("  //push D");

@@ -2,6 +2,12 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
+/**
+ * Class for parsing vm files.
+ * 
+ * @author Boris
+ *
+ */
 public class Parser implements AutoCloseable
 {
 	enum CommandType
@@ -28,7 +34,7 @@ public class Parser implements AutoCloseable
 	private int			arg2;
 
 	/**
-	 * Parses a hack asm file.
+	 * Parses a hack vm file.
 	 * 
 	 * @param inputFilePath
 	 *            - path to the hack asm file.
@@ -49,23 +55,13 @@ public class Parser implements AutoCloseable
 	}
 
 	/**
-	 * Tests to see if you can call {@link #advance()}. Will close the stream if
-	 * there are no more lines to parse
+	 * Tests to see if you can call {@link #advance()}.
 	 * 
 	 * @return True if there are more commands to process in the file
 	 */
 	public boolean hasMoreCommands()
 	{
-		if (!inputFile.hasNextLine())
-		{
-			// should probably provide a close method
-			inputFile.close();
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return inputFile.hasNextLine();
 	}
 
 	/**
@@ -96,13 +92,14 @@ public class Parser implements AutoCloseable
 	/**
 	 * Parses the line based on the command type.
 	 */
+	@SuppressWarnings("incomplete-switch") //TODO remove if vm part 2 is made
 	private void parse()
 	{
 		parseCommandType();
 		switch (commandType)
 		{
 			case ARITHMETIC:
-				parseArithemtic();
+				parseArithmetic();
 				break;
 			case PUSH:
 			case POP:
@@ -146,7 +143,7 @@ public class Parser implements AutoCloseable
 		}
 	}
 
-	private void parseArithemtic()
+	private void parseArithmetic()
 	{
 		arg1 = splitLine[0];
 	}
