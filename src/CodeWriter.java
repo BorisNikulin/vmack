@@ -22,7 +22,7 @@ public class CodeWriter
 
 	private final static HashMap<String, Character>	OPERATOR_LOOKUP				= new HashMap<>(6);
 	private final static HashMap<String, String>	LOGICAL_EXPRESSION_LOOKUP	= new HashMap<>(3);
-	private final static HashMap<String, String>	SEGMENT_LOOKUP				= new HashMap<>(3);
+	private final static HashMap<String, String>	SEGMENT_LOOKUP				= new HashMap<>(4);
 
 	static
 	{
@@ -42,7 +42,6 @@ public class CodeWriter
 		SEGMENT_LOOKUP.put("local", "LCL");
 		SEGMENT_LOOKUP.put("this", "THIS");
 		SEGMENT_LOOKUP.put("that", "THAT");
-		SEGMENT_LOOKUP.put("temp", "R5");
 	}
 
 	public CodeWriter(Consumer<String> out)
@@ -154,13 +153,15 @@ public class CodeWriter
 			case "constant":
 				writePushConstant(index);
 				break;
-			//TODO bound checking on temp?
-			case "temp":
 			case "local":
 			case "argument":
 			case "this":
 			case "that":
 				writePushSimpleSegment(SEGMENT_LOOKUP.get(segment), index);
+				break;
+			// TODO bound checking on temp?
+			case "temp":
+				writePushTemp(index);
 				break;
 			case "pointer":
 				writePushPointer(index);
@@ -195,10 +196,23 @@ public class CodeWriter
 		writePushD();
 	}
 
+	private void writePushTemp(int index)
+	{
+		out.accept("  //push temp[" + index + "]");
+		out.accept("  @" + index);
+		out.accept("  D=A");
+		out.accept("  @R5");
+		out.accept("  A=A+D");
+		out.accept("  D=M");
+		out.accept("");
+		
+		writePushD();
+	}
+	
 	private void writePushPointer(int index)
 	{
-		//TODO simplify if s (DRY)
-		if(index == 0)
+		// TODO simplify if s (DRY)
+		if (index == 0)
 		{
 			out.accept("  //push pointer " + index);
 			out.accept("  @THIS");
@@ -207,7 +221,7 @@ public class CodeWriter
 
 			writePushD();
 		}
-		else if(index == 1)
+		else if (index == 1)
 		{
 			out.accept("  //push pointer " + index);
 			out.accept("  @THAT");
@@ -216,22 +230,25 @@ public class CodeWriter
 
 			writePushD();
 		}
-		else {
+		else
+		{
 			throw new IllegalArgumentException("Invalid offset to pointer segment: " + index);
 		}
 	}
-	
+
 	private void writePop(String segment, int index)
 	{
 		switch (segment)
 		{
-			//TODO bound checking on temp?
-			case "temp":
 			case "local":
 			case "argument":
 			case "this":
 			case "that":
 				writePopSimpleSegment(SEGMENT_LOOKUP.get(segment), index);
+				break;
+			// TODO bound checking on temp?
+			case "temp":
+				writePopTemp(index);
 				break;
 			case "pointer":
 				writePopPointer(index);
@@ -242,7 +259,7 @@ public class CodeWriter
 				throw new IllegalArgumentException("Invalid segment: " + segment);
 		}
 	}
-
+	
 	private void writePopSimpleSegment(String segment, int index)
 	{
 		out.accept("  //pop simple segment " + segment + "[" + index + "]");
@@ -255,33 +272,54 @@ public class CodeWriter
 		out.accept("");
 
 		writePopD();
-		
+
 		out.accept("  @R13");
 		out.accept("  A=M");
 		out.accept("  M=D");
 		out.accept("");
 	}
-	
+
+	private void writePopTemp(int index)
+	{
+		out.accept("  //pop temp[" + index + "]");
+		out.accept("  @" + index);
+		out.accept("  D=A");
+		out.accept("  @R5");
+		out.accept("  D=A+D");
+		out.accept("  @R13");
+		out.accept("  M=D");
+		out.accept("");
+
+		writePopD();
+
+		out.accept("  @R13");
+		out.accept("  A=M");
+		out.accept("  M=D");
+		out.accept("");
+	}
+
+
 	private void writePopPointer(int index)
 	{
-		//TODO simplify if s (DRY)
+		// TODO simplify if s (DRY)
 		writePopD();
-		
-		if(index == 0)
-		{	
+
+		if (index == 0)
+		{
 			out.accept("  //pop pointer " + index);
 			out.accept("  @THIS");
 			out.accept("  M=D");
 			out.accept("");
 		}
-		else if(index == 1)
-		{			
+		else if (index == 1)
+		{
 			out.accept("  //pop pointer " + index);
 			out.accept("  @THAT");
 			out.accept("  M=D");
 			out.accept("");
 		}
-		else {
+		else
+		{
 			throw new IllegalArgumentException("Invalid offset to pointer segment: " + index);
 		}
 	}
