@@ -35,8 +35,8 @@ public class Assembler
 		{
 			Scanner keyboard = new Scanner(System.in);
 
-			System.out.println("Please enter assembly file name you would like to assemble.");
-			System.out.println("Don't forget the .asm extension: ");
+			System.out.println("Please enter vm file name you would like to translate.");
+			System.out.println("Don't forget the .vm extension: ");
 			inputFileName = keyboard.nextLine();
 
 			keyboard.close();
