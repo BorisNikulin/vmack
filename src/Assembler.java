@@ -5,9 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-import exceptions.AssemblerException;
-import exceptions.AssemblerExceptionBuilder;
-
 public class Assembler
 {
 
@@ -69,6 +66,8 @@ public class Assembler
 //			secondPass(inputFileName, symbolTable, outputFile);
 //		}
 
+		secondPass(inputFileName, outputFile);
+		
 		outputFile.close();
 	}
 
@@ -79,29 +78,7 @@ public class Assembler
 	// HINT: when should rom address increase? What kind of commands?
 	private static void firstPass(String inputFileName)
 	{
-		Parser parser = new Parser(inputFileName);
 
-		while (parser.hasMoreCommands())
-		{
-				parser.advance();
-
-				switch (parser.getCommandType())
-				{
-					case LABEL:
-						if (!symbolTable.contains(parser.getSymbol()))
-						{
-							symbolTable.addEntry(parser.getSymbol(), curROM);
-						}
-						break;
-					case A:
-					case C:
-						curROM++;
-						break;
-					default:
-						break;
-				}
-
-		}
 
 	}
 
@@ -120,7 +97,29 @@ public class Assembler
 	// commands?
 	private static void secondPass(String inputFileName, PrintWriter outputFile)
 	{
+		Parser parser = new Parser(inputFileName);
+//		CodeWriter writer = new CodeWriter(outputFile::println);
+		CodeWriter writer = new CodeWriter(System.out::println);
 		
+
+		while (parser.hasMoreCommands())
+		{
+				parser.advance();
+
+				switch (parser.getCommandType())
+				{
+					case ARITHMETIC:
+						writer.writeArithemtic(parser.getArg1());
+						break;
+					case PUSH:
+					case POP:
+						writer.writePushPop(parser.getCommandType(), parser.getArg1(), parser.getArg2());
+						break;
+					default:
+						break;
+				}
+
+		}
 	}
 
 	/**
