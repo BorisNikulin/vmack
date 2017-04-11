@@ -123,22 +123,32 @@ public class Parser implements AutoCloseable
 	 */
 	private void parseCommandType()
 	{
-		if (splitLine == null || splitLine.isEmpty())
+		if (splitLine == null || splitLine[0].isEmpty())
 		{
 			commandType = CommandType.NONE;
 			return;
 		}
 
-		switch (splitLine.split()[0])
+		switch (splitLine[0])
 		{
-			case '@':
-				commandType = CommandType.A;
+			case "add":
+			case "sub":
+			case "neg":
+			case "eq":
+			case "gt":
+			case "lt":
+			case "and":
+			case "or":
+			case "not":
+				commandType = CommandType.ARITHMETIC;
 				return;
-			case '(':
-				commandType = CommandType.LABEL;
+			case "push":
+				commandType = CommandType.PUSH;
 				return;
-			default:
-				commandType = CommandType.C;
+			case "pop":
+				commandType = CommandType.POP;
+				return;
+			//vm part 2 stuff here
 				return;
 		}
 	}
@@ -151,12 +161,16 @@ public class Parser implements AutoCloseable
 	{
 		// pardon the small regex :D
 		// I just don't want to spam lots of replaceAll s
-		splitLine = rawLine.trim().replaceAll("\\s+", " ").split(" ");
+		//TODO check this code (maybe 58fd9bd is a better version
 
 		int commentIndex = rawLine.indexOf("//");
 		if (commentIndex >= 0)
 		{
-			splitLine = splitLine.substring(0, commentIndex);
+			splitLine = rawLine.substring(0, commentIndex).toLowerCase().split(" ");
+		}
+		else
+		{
+			splitLine = rawLine.toLowerCase().split(" ");
 		}
 	}
 
