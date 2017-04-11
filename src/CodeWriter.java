@@ -63,44 +63,44 @@ public class CodeWriter
 	private void writeArithUnary(char op)
 	{
 		out.accept("//arith unary with op: " + op);
-		out.accept("\t@SP");
-		out.accept("\tAM=M-1");
-		out.accept("\tM=" + op + "M");
+		out.accept("  @SP");
+		out.accept("  AM=M-1");
+		out.accept("  M=" + op + "M");
 		out.accept("");
 	}
 
 	private void writeArithBinary(char op)
 	{
 		out.accept("//arith binary with op: " + op);
-		out.accept("\t@SP");
-		out.accept("\tAM=M-1");
-		out.accept("\tD=M");
-		out.accept("\tA=A-1");
-		out.accept("\tM=M" + op + "D");
+		out.accept("  @SP");
+		out.accept("  AM=M-1");
+		out.accept("  D=M");
+		out.accept("  A=A-1");
+		out.accept("  M=M" + op + "D");
 		out.accept("");
 	}
 
 	private void writeArithLogicalExpression(String op)
 	{
-		out.accept("\t//arith logical expression with op: " + op);
-		out.accept("\t@SP");
-		out.accept("\tA=M-1");
-		out.accept("\tA=A-1");
-		out.accept("\tD=M");
-		out.accept("\tA=A+1");
-		out.accept("\tD=D-M");
-		out.accept("\t@" + labelCounter + "T");
-		out.accept("\tD;" + op);
-		out.accept("\t@" + labelCounter + "F");
-		out.accept("\tD=0");
-		out.accept("\t0;JMP");
+		out.accept("  //arith logical expression with op: " + op);
+		out.accept("  @SP");
+		out.accept("  A=M-1");
+		out.accept("  A=A-1");
+		out.accept("  D=M");
+		out.accept("  A=A+1");
+		out.accept("  D=D-M");
+		out.accept("  @" + labelCounter + "T");
+		out.accept("  D;" + op);
+		out.accept("  @" + labelCounter + "F");
+		out.accept("  D=0");
+		out.accept("  0;JMP");
 		out.accept("(" + labelCounter + "T)");
-		out.accept("\tD=-1");
+		out.accept("  D=-1");
 		out.accept("(" + labelCounter + "F)");
-		out.accept("\t@SP");
-		out.accept("\tAM=M-1");
-		out.accept("\tA=A-1");
-		out.accept("\tM=D");
+		out.accept("  @SP");
+		out.accept("  AM=M-1");
+		out.accept("  A=A-1");
+		out.accept("  M=D");
 		out.accept("");
 
 		labelCounter++;
@@ -152,9 +152,9 @@ public class CodeWriter
 	
 	private void writePushConstant(int index)
 	{
-		out.accept("\t//push constant");
-		out.accept("\t@" + index);
-		out.accept("\tD=A");
+		out.accept("  //push constant");
+		out.accept("  @" + index);
+		out.accept("  D=A");
 		out.accept("");
 	}
 
@@ -166,20 +166,20 @@ public class CodeWriter
 
 	private void writePushD()
 	{
-		out.accept("\t//push D");
-		out.accept("\t@SP");
-		out.accept("\tAM=M+1");
-		out.accept("\tA=A-1");
-		out.accept("\tM=D");
+		out.accept("  //push D");
+		out.accept("  @SP");
+		out.accept("  AM=M+1");
+		out.accept("  A=A-1");
+		out.accept("  M=D");
 		out.accept("");
 	}
 
 	private void writePopD()
 	{
-		out.accept("\t//pop D");
-		out.accept("\t@SP");
-		out.accept("\tAM=M-1");
-		out.accept("\tD=M");
+		out.accept("  //pop D");
+		out.accept("  @SP");
+		out.accept("  AM=M-1");
+		out.accept("  D=M");
 		out.accept("");
 	}
 
