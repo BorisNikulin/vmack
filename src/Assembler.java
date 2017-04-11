@@ -58,13 +58,6 @@ public class Assembler
 			System.err.println("Run program again, make sure you have write permissions, etc.");
 			System.exit(0);
 		}
-		
-		
-
-//		if (firstPass(inputFileName, symbolTable))
-//		{
-//			secondPass(inputFileName, symbolTable, outputFile);
-//		}
 
 		secondPass(inputFileName, outputFile);
 		
@@ -98,9 +91,8 @@ public class Assembler
 	private static void secondPass(String inputFileName, PrintWriter outputFile)
 	{
 		Parser parser = new Parser(inputFileName);
-//		CodeWriter writer = new CodeWriter(outputFile::println);
-		CodeWriter writer = new CodeWriter(System.out::println);
-		
+		CodeWriter writer = new CodeWriter(outputFile::println, inputFileName);
+//		CodeWriter writer = new CodeWriter(System.out::println, stdOut);
 
 		while (parser.hasMoreCommands())
 		{
@@ -120,6 +112,8 @@ public class Assembler
 				}
 
 		}
+		
+		parser.close();
 	}
 
 	/**

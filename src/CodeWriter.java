@@ -20,6 +20,8 @@ public class CodeWriter
 	private Consumer<String>						out;
 	private int										labelCounter;
 
+	private String									staticQualifier;
+
 	private final static HashMap<String, Character>	OPERATOR_LOOKUP				= new HashMap<>(6);
 	private final static HashMap<String, String>	LOGICAL_EXPRESSION_LOOKUP	= new HashMap<>(3);
 	private final static HashMap<String, String>	SEGMENT_LOOKUP				= new HashMap<>(4);
@@ -44,10 +46,12 @@ public class CodeWriter
 		SEGMENT_LOOKUP.put("that", "THAT");
 	}
 
-	public CodeWriter(Consumer<String> out)
+	public CodeWriter(Consumer<String> out, String staticQualifier)
 	{
 		this.out = out;
 		labelCounter = 0;
+
+		this.staticQualifier = staticQualifier;
 	}
 
 	public void writeArithemtic(String command)
@@ -167,6 +171,7 @@ public class CodeWriter
 				writePushPointer(index);
 				break;
 			case "static":
+
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid segment: " + segment);
@@ -205,10 +210,10 @@ public class CodeWriter
 		out.accept("  A=A+D");
 		out.accept("  D=M");
 		out.accept("");
-		
+
 		writePushD();
 	}
-	
+
 	private void writePushPointer(int index)
 	{
 		// TODO simplify if s (DRY)
@@ -216,7 +221,7 @@ public class CodeWriter
 		{
 			out.accept("  //push pointer " + index);
 			out.accept("  @THIS");
-			out.accept("  D=A");
+			out.accept("  D=M");
 			out.accept("");
 
 			writePushD();
@@ -225,7 +230,7 @@ public class CodeWriter
 		{
 			out.accept("  //push pointer " + index);
 			out.accept("  @THAT");
-			out.accept("  D=A");
+			out.accept("  D=M");
 			out.accept("");
 
 			writePushD();
@@ -259,7 +264,7 @@ public class CodeWriter
 				throw new IllegalArgumentException("Invalid segment: " + segment);
 		}
 	}
-	
+
 	private void writePopSimpleSegment(String segment, int index)
 	{
 		out.accept("  //pop simple segment " + segment + "[" + index + "]");
@@ -297,7 +302,6 @@ public class CodeWriter
 		out.accept("  M=D");
 		out.accept("");
 	}
-
 
 	private void writePopPointer(int index)
 	{
@@ -344,6 +348,14 @@ public class CodeWriter
 	}
 
 	/**
+	 * @return the out
+	 */
+	public Consumer<String> getOut()
+	{
+		return out;
+	}
+
+	/**
 	 * Set's the consumer that will consume each line of output from the code
 	 * writer.
 	 * 
@@ -355,4 +367,20 @@ public class CodeWriter
 		this.out = out;
 	}
 
+	/**
+	 * @return the staticQualifier
+	 */
+	public String getStaticQualifier()
+	{
+		return staticQualifier;
+	}
+
+	/**
+	 * @param staticQualifier
+	 *            the staticQualifier to set
+	 */
+	public void setStaticQualifier(String staticQualifier)
+	{
+		this.staticQualifier = staticQualifier;
+	}
 }
