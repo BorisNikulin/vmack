@@ -171,13 +171,12 @@ public class CodeWriter
 				writePushPointer(index);
 				break;
 			case "static":
-
+				writePushStatic(index);
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid segment: " + segment);
 		}
 	}
-
 	private void writePushConstant(int index)
 	{
 		out.accept("  //push constant " + index);
@@ -240,6 +239,16 @@ public class CodeWriter
 			throw new IllegalArgumentException("Invalid offset to pointer segment: " + index);
 		}
 	}
+	
+	private void writePushStatic(int index)
+	{
+		out.accept("  //push static[" + index + "]");
+		out.accept("  @" + staticQualifier + "." + index);
+		out.accept("  D=M");
+		out.accept("");
+		
+		writePushD();
+	}
 
 	private void writePop(String segment, int index)
 	{
@@ -259,12 +268,13 @@ public class CodeWriter
 				writePopPointer(index);
 				break;
 			case "static":
+				writePopStatic(index);
 				break;
 			default:
 				throw new IllegalArgumentException("Invalid segment: " + segment);
 		}
 	}
-
+	
 	private void writePopSimpleSegment(String segment, int index)
 	{
 		out.accept("  //pop simple segment " + segment + "[" + index + "]");
@@ -328,6 +338,18 @@ public class CodeWriter
 		}
 	}
 
+	private void writePopStatic(int index)
+	{
+		writePopD();
+		
+		out.accept("  //pop static[" + index + "]");
+		out.accept("  @" + staticQualifier + "." + index);
+		out.accept("  M=D");
+		out.accept("");
+
+	}
+
+	
 	private void writePushD()
 	{
 		out.accept("  //push D");

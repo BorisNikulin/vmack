@@ -59,7 +59,7 @@ public class Assembler
 			System.exit(0);
 		}
 
-		secondPass(inputFileName, outputFile);
+		secondPass(inputFileName, pathSections[1] ,outputFile);
 		
 		outputFile.close();
 	}
@@ -88,11 +88,11 @@ public class Assembler
 	// HINT: when should rom address increase? What should ram address start
 	// at? When should it increase? What do you do with L commands and No
 	// commands?
-	private static void secondPass(String inputFileName, PrintWriter outputFile)
+	private static void secondPass(String inputFileName, String fileNameForStaticQualifier, PrintWriter outputFile)
 	{
 		Parser parser = new Parser(inputFileName);
-		CodeWriter writer = new CodeWriter(outputFile::println, inputFileName);
-//		CodeWriter writer = new CodeWriter(System.out::println, stdOut);
+		CodeWriter writer = new CodeWriter(outputFile::println, fileNameForStaticQualifier);
+//		CodeWriter writer = new CodeWriter(System.out::println, "stdOut");
 
 		while (parser.hasMoreCommands())
 		{
