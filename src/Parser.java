@@ -104,17 +104,14 @@ public class Parser implements AutoCloseable
 		parseCommandType();
 		switch (commandType)
 		{
-			case A:
-			case LABEL:
-				parseSymbol();
+			case ARITHMETIC:
+				parseArithemtic();
 				break;
-			case C:
-				parseDest();
-				parseComp();
-				parseJump();
+			case PUSH:
+			case POP:
+				parsePushOrPop();
 				break;
-			default:
-				break;
+			//vm part 2 here
 		}
 	}
 
@@ -141,16 +138,26 @@ public class Parser implements AutoCloseable
 			case "or":
 			case "not":
 				commandType = CommandType.ARITHMETIC;
-				return;
+				break;
 			case "push":
 				commandType = CommandType.PUSH;
-				return;
+				break;
 			case "pop":
 				commandType = CommandType.POP;
-				return;
+				break;
 			//vm part 2 stuff here
-				return;
 		}
+	}
+	
+	private void parseArithemtic()
+	{
+		arg1 = splitLine[0];
+	}
+
+	private void parsePushOrPop()
+	{
+		arg1 = splitLine[1];
+		arg2 = Integer.parseInt(splitLine[2]);
 	}
 
 	/**
@@ -161,7 +168,7 @@ public class Parser implements AutoCloseable
 	{
 		// pardon the small regex :D
 		// I just don't want to spam lots of replaceAll s
-		//TODO check this code (maybe 58fd9bd is a better version
+		//TODO check this code (maybe 58fd9bd is a better version)
 
 		int commentIndex = rawLine.indexOf("//");
 		if (commentIndex >= 0)
@@ -177,5 +184,45 @@ public class Parser implements AutoCloseable
 	public void close()
 	{
 		inputFile.close();
+	}
+
+	/**
+	 * @return the lineNumber
+	 */
+	public int getLineNumber()
+	{
+		return lineNumber;
+	}
+
+	/**
+	 * @return the rawLine
+	 */
+	public String getRawLine()
+	{
+		return rawLine;
+	}
+
+	/**
+	 * @return the commandType
+	 */
+	public CommandType getCommandType()
+	{
+		return commandType;
+	}
+
+	/**
+	 * @return the arg1
+	 */
+	public String getArg1()
+	{
+		return arg1;
+	}
+
+	/**
+	 * @return the arg2
+	 */
+	public int getArg2()
+	{
+		return arg2;
 	}
 }
